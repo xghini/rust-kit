@@ -1,0 +1,9 @@
+[package]
+name = "rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+redis = { version = "0.23.0", features = ["tokio-comp"] }
+anyhow = "1.0"
