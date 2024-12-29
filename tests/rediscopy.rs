@@ -36,42 +36,8 @@ async fn t1() -> RedisResult<()> {
 
   /* 对返回类型的定义,还能形成不同的返回结果?
    实际上，当你使用不同的类型声明时，Redis 客户端库会进行不同的类型转换处理,这涉及到了 Rust 的 trait 系统和类型推断
-在 Redis 客户端库中，hgetall 方法的返回值很可能是通过类似这样的泛型实现的：
-```rust,no_run
-pub async fn hgetall<T>(&self, key: &str) -> Result<T> 
-where
-  T: FromRedisResponse
-{
-  // 执行 HGETALL 命令并获取原始响应
-  let response = self.execute_command("HGETALL", &[key]).await?;
-  // 将响应转换为目标类型 T
-  T::from_redis_response(response)
-}
-```
-关键在于 FromRedisResponse 这个 trait。它可能有多个不同的实现：
-```rust,no_run
-// 为 HashMap 实现转换
-impl FromRedisResponse for HashMap<String, String> {
-  fn from_redis_response(response: RedisResponse) -> Result<Self> {
-    // 直接将响应转换为 HashMap
-    convert_to_hashmap(response)
-  }
-}
+    在 Redis 客户端库中，hgetall 方法的返回值很可能是通过类似这样的泛型实现的：
 
-// 为 Option<HashMap> 实现转换
-impl FromRedisResponse for Option<HashMap<String, String>> {
-  fn from_redis_response(response: RedisResponse) -> Result<Self> {
-    match response {
-      RedisResponse::Nil => Ok(None),  // 如果键不存在，返回 None
-      response => {
-        // 否则转换为 HashMap 并包装在 Some 中
-        let hashmap = convert_to_hashmap(response)?;
-        Ok(Some(hashmap))
-      }
-    }
-  }
-}
-```
   */
   let res4: Option<HashMap<String, String>> = conn.hgetall("user:admin@xship.top").await?;
   println!("hset的结果: {:?}", res4);
